@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8">
+    <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+    <script src="https://unpkg.com/tabulator-tables@4.0.5/dist/js/tabulator.min.js"></script>
+    <link href="https://unpkg.com/tabulator-tables@4.0.5/dist/css/bootstrap/tabulator_bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css" rel="stylesheet">
+    <style type="text/css">
+
+    /* Tweaking default modals a bit for content, as long as screen size supports */
+    @media screen and (min-width: 1400px) {
+
+        .modal-lg {
+          width: 1250px;
+          max-width: 100%;
+          max-height: 100%;
+        }
+
+        .modal-md {
+            width: 800px;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .modal-content {
+            padding: 15px 15px 15px 15px;
+        }
+
+        .mbo-running-avg-modal {
+            left: 82%;
+            bottom: 25%;
+        }
+    }
+</style>
+    <title>CLNS Rank/Rate</title>
+</head>
+
+<body>
+    <div class="container">
+      <div class="row">
+        <h3>Update Record</h3>
+      </div>
+      <form action="create.php" method="post">
+          <div class="row">
+            <div class="col-md-3">
+              <label class="control-label">Name</label>
+                <div id="empName" name="empName"></div>
+            </div>
+
+              <div class="col-md-2">
+              <label class="control-label">GHR</label>
+                <div id="empGHR" name="empGHR"></div>
+              </div>
+
+              <div class="col-md-3">
+                <label class="control-label">Supervisor</label>
+                  <div id="supName" name="supName"></div>
+              </div>
+
+              <div class="col-md-2">
+              <label class="control-label">Title</label>
+                <div id="empTitleDiv" name="empTitleDiv"></div>
+              </div>
+
+            <div class="col-md-1">
+              <label class="control-label">Quarter</label>
+                <div id="quarter" name="quarter"></div>
+            </div>
+
+            <div class="col-md-1">
+              <label class="control-label">Year</label>
+                <div id="year" name="year"></div>
+            </div>
+          </div>
+
+          <br>
+
+          <div class="row">
+            <div class="col-md-2">
+              <label class="control-label">Overall Rating</label>
+                <div class="dropdown" id="overallRating">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="overallRating" data-toggle="dropdown" aria-haspopup="true">
+                      <span id="curRating">Overall Rating</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" id="overallRatingDropdown" aria-labelledby="dropdownMenuButton">
+                      <li><a class="dropdown-item" href="#" data-value="Exceeds Most">Exceeds Most</a></li>
+                      <li><a class="dropdown-item" href="#" data-value="Exceeds Some">Exceeds Some</a></li>
+                      <li><a class="dropdown-item" href="#" data-value="Successful">Successful</a></li>
+                      <li><a class="dropdown-item" href="#" data-value="Unsuccessful">Unsuccessful</a></li>
+                    </ul>
+                </div>
+              </div>
+        <div class="col-md-2">
+        <label class="control-label">Blue Book</label>
+          <div id="writeup">
+              <form id="writeupForm">
+                <button class="btn btn-primary" type="button" data-toggle="modal" data-target=".writeup-modal">Blue Book</button>
+                <div class="modal writeup-modal animated bounceInDown" tabindex="-1" role="dialog" aria-labelledby="Writeup" aria-hidden="true">
+                  <div class="modal-dialog modal-md" role="document">
+                    <div class="modal-content">
+                          <h3 class="modal-title">Blue Book</h3>
+                        <br>
+                      <div class="modal-body" id="writeupBody">
+                        <div class="container-fluid">
+                          <div class="row">
+                            <ul class="list-group">
+                                  <div id="writeupForm"><textarea class="form-control" rows="15" id="writeupFormBody"></textarea></div>
+                            </ul>
+                          </div>
+                    </div>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" id="writeupModalSave">Save changes</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </form>
+        </div>
+        </div>
+        <div class="col-md-2">
+        <label class="control-label">MBO Calc</label>
+          <div id="writeup">
+              <form id="writeupForm">
+                <button class="btn btn-primary" id="mboCalcButton" type="button" data-toggle="modal" data-target=".mbo-calc-modal">MBO Calc</button>
+                <div class="modal mbo-calc-modal animated bounceInLeft" id="mboCalcModal" tabindex="-1" role="dialog" aria-labelledby="MBO Calculator" aria-hidden="true">
+                  <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                          <h3 class="modal-title">MBO Calculator</h3>
+                        <br>
+                      <div class="modal-body" id="mboCalcBody">
+                        <div class="container-fluid">
+                          <div class="row">
+                                  <div id="mboCalcForm"></div>
+                          </div>
+                    </div>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" id="mboCalcModalSave">Save changes</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </form>
+        </div>
+        </div>
+          <div id="runningAvgModal">
+              <form id="runningAvgModalForm">
+                <div class="modal mbo-running-avg-modal animated bounceInRight" id="runningAvgModalContent" tabindex="-1" role="dialog" aria-labelledby="Running Average" aria-hidden="true">
+                  <div class="modal-dialog modal-sm" role="document">
+                    <div class="modal-content">
+                          <h3 class="modal-title">Current Quarter Rating</h3>
+                        <br>
+                      <div class="modal-body" id="runningAvgModalBody">
+                        <div class="container-fluid">
+                          <div class="row">
+                                  <div id="runningAvgModalForm"></div>
+                          </div>
+                          <div class="row"><h4 align="right" id="runningAvg">Numeric: </h4></div>
+                          <div class="row"><h4 align="right" id="runningAvgRating">Alpha: </h4></div>
+                    </div>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </form>
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-2">
+          <label class="control-label">Overall Ranking</label>
+            <div id="overall_ranking" name="overall_ranking"></div>
+        </div>
+
+        <div class="col-md-2">
+          <label class="control-label">Running Average</label>
+            <div id="run_avg" name="run_avg"></div>
+        </div>
+
+        <div class="container">
+            <div class="pull-right">
+                <div class="text-right">
+                    <div class="row">
+                        <div class="col-sm-4 offset-sm-4">
+                            <label class="control-label">Positive Watch</label>
+                          <div id="pos_watch"><input id="pos_watch" name="checkbox[]" type="checkbox"></div>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label">Negative Watch</label>
+                              <div id="neg_watch"><input id="neg_watch" name="checkbox[]" type="checkbox"></div>
+                        </div>
+                        <div class="col-sm-4">
+                          <label class="control-label">Succession</label>
+                            <div id="succession"><input id="succession" name="checkbox[]" type="checkbox"></div>
+                        </div>
+                    </div>
+                        <div class="row">
+                        <div class="col-sm-4 offset-sm-4">
+                          <label class="control-label">Promotion</label>
+                            <div id="promo"><input id="promo" name="checkbox[]" type="checkbox"></div>
+                        </div>
+                        <div class="col-sm-4">
+                          <label class="control-label">EAN PA</label>
+                            <div id="ean_pa"><input id="ean_pa" name="checkbox[]" type="checkbox"></div>
+                        </div>
+                        <div class="col-sm-4">
+                          <label class="control-label">EAN PIP</label>
+                            <div id="ean_pip"><input id="ean_pip" name="checkbox[]" type="checkbox"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 offset-sm-4">
+                          <label class="control-label">EAN Verbal</label>
+                            <div id="ean_verbal"><input id="ean_verbal" name="checkbox[]" type="checkbox"></div>
+                        </div>
+                        <div class="col-sm-4">
+                          <label class="control-label">EAN Written</label>
+                            <div id="ean_written"><input id="ean_written" name="checkbox[]" type="checkbox"></div>
+                        </div>
+                        <div class="col-sm-4">
+                          <label class="control-label">EAN Final</label>
+                            <div id="ean_final"><input id="ean_final" name="checkbox[]" type="checkbox"></div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-1">
+                <button type="submit" class="btn btn-success" id="submitPageSave">Submit</button>
+            </div>
+            <div class="col-sm-1">
+                <span id="backBtn"></span>
+            </div>
+            <div class="col-sm-1">
+                <button type="submit" class="btn btn-danger" id="deleteRecord">Delete</button>
+            </div>
+        </div>
+      </form>
+      <script src="create.js"></script>
+    </body>
+</html>
