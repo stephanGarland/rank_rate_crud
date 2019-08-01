@@ -1,12 +1,13 @@
 <?php
-    require 'db.php';
-    $empGHR = $_GET['urlGHR'];
-    $curQuarter = $_GET['curQuarter'];
-    $curYear = $_GET['curYear'];
+
+    require '../rank_rate_inc/db.php';
+    $empGHR = $_POST['url_ghr'];
+    $curQuarter = $_POST['curQuarter'];
+    $curYear = $_POST['curYear'];
 
     $getNameSql = "SELECT *
-                FROM public.review_employees emp
-                RIGHT JOIN public.review_ratings rating
+                FROM public.review_employees_test emp
+                RIGHT JOIN public.review_ratings_test rating
                     ON emp.ghr_id = rating.ghr_id
                 WHERE (
                         (emp.ghr_id = $1)
@@ -18,7 +19,7 @@
                 ";
 
     $getAllRatingsSql = "SELECT overall_numeric_rating
-                        FROM public.review_ratings
+                        FROM public.review_ratings_test
                         WHERE (
                             (ghr_id = $1)
                             AND
@@ -27,16 +28,12 @@
                 ";
 
     $resultAll = pg_prepare($db, "get_data", $getNameSql);
-    $resultAll = pg_execute($db, "get_data", array($empGHR, $curQuarter, $curYear))
-        or die (pg_last_error($db));
-    $resultAllArr = pg_fetch_all($resultAll)
-        or die (pg_last_error($db));
+    $resultAll = pg_execute($db, "get_data", array($empGHR, $curQuarter, $curYear));
+    $resultAllArr = pg_fetch_all($resultAll);
 
     $resultAvgRating = pg_prepare($db, "get_ratings", $getAllRatingsSql);
-    $resultAvgRating = pg_execute($db, "get_ratings", array($empGHR, $curYear))
-        or die (pg_last_error($db));
-    $resultRatingArr = pg_fetch_all($resultAvgRating)
-        or die (pg_last_error($db));
+    $resultAvgRating = pg_execute($db, "get_ratings", array($empGHR, $curYear));
+    $resultRatingArr = pg_fetch_all($resultAvgRating);
 
     $nameResult = $resultAllArr[0]['full_name'];
     $ghrResult = $resultAllArr[0]['ghr_id'];
@@ -75,10 +72,10 @@
     }
 
     $resultJSON = [
-    'full_name' => '<input id="empName" name="empName" type="text" value="' . $nameResult . '" readonly class="form-control">',
-    'ghr_id' => '<input id="empGHR" name="empGHR" type="text" value="' . $ghrResult . '" readonly class="form-control">',
-    'title' => '<input id="empTitle" name="empTitle" type="text" value="' . $titleResult . '" readonly class="form-control">',
-    'reports_to_name' => '<input id="supName" name="supName" type="text" value="' . $supName . '" readonly class="form-control">',
+    'full_name' => $nameResult,
+    'ghr_id' => $ghrResult,
+    'title' => $titleResult,
+    'reports_to_name' => $supName,
     'reports_to' => $supGHR,
     'shift_ranking' => $shiftRanking,
     'overall_rating' => $overallRating,

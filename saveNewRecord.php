@@ -2,7 +2,7 @@
     error_reporting(E_ALL);
     ini_set('display_errors', '1');
     header("Content-Type: application/json");
-    require 'db.php';
+    require '../rank_rate_inc/db.php';
 
     define("SHIFT_RANKING_DEFAULT", 99);
     $qtr = $_POST['qtr'];
@@ -25,7 +25,7 @@
     $group_2 = "'MBO #1:\x20\nMBO #2:\x20\nMBO #3:\x20\nMBO #4:\x20\nMBO#5\x20'";
 
     // Added term_date so terminated employees aren't added to new quarters when doing a bulk add
-    $insertRecordSql = "INSERT INTO public.review_ratings
+    $insertRecordSql = "INSERT INTO public.review_ratings_test
                                 	(
                                 		ghr_id,
                                 		full_name,
@@ -80,7 +80,7 @@
                                     		WHEN subgroup = 'Group_2' THEN $group_2
                                     	END,
                                         term_date
-                                FROM public.review_ratings
+                                FROM public.review_ratings_test
                                 WHERE
                                     ghr_id = $4
                                 AND

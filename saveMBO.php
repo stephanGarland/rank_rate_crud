@@ -1,6 +1,6 @@
 <?php
-    header("Content-Type: application/json; charset=UTF-8");
-    require 'db.php';
+    header("Content-Type: application/json");
+    require '../rank_rate_inc/db.php';
 
     if(isset($_POST['mboScore'])) {
         $mboScore = $_POST['mboScore'];
@@ -13,7 +13,7 @@
     $overall_rating = $mboScore[3];
     $overall_numeric_rating = $mboScore[4];
 
-    $insertMBOSql = "UPDATE public.review_ratings
+    $insertMBOSql = "UPDATE public.review_ratings_test
                 SET
                     overall_numeric_rating = $1,
                     overall_rating = $2

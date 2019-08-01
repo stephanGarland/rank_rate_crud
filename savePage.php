@@ -1,8 +1,8 @@
 <?php
     header("Content-Type: application/json");
-    require 'db.php';
+    require '../rank_rate_inc/db.php';
 
-    $insertRatingsSql = "INSERT INTO public.review_ratings(
+    $insertRatingsSql = "INSERT INTO public.review_ratings_test(
                         ghr_id, overall_rating, pos_watch,
                         neg_watch, ean_pa, ean_pip,
                         ean_verbal, ean_written, ean_final,
@@ -61,7 +61,7 @@
             $ean_final,
             $succession,
             $promo,
-            $quarter, 
+            $quarter,
             $year
             )
         )

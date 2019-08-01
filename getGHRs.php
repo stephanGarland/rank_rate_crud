@@ -1,5 +1,5 @@
 <?php
-    require 'db.php';
+    require '../rank_rate_inc/db.php';
     $sup = $_POST['sup_name'];
     $qtr = $_POST['qtr'];
     $year = $_POST['year'];
@@ -18,7 +18,7 @@
 
     $getGHRSql = "SELECT DISTINCT ON (ghr_id)
                 ghr_id
-                FROM public.review_ratings
+                FROM public.review_ratings_test
                 WHERE
                     reports_to_name LIKE $1
                 AND

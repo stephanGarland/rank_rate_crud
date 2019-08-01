@@ -1,5 +1,5 @@
 const parsedUrl = new URL(window.location.href);
-const urlGHR = parsedUrl.searchParams.get("id");
+const url_ghr = parsedUrl.searchParams.get("id");
 const selQtr = parsedUrl.searchParams.get("qtr");
 const selYear = parsedUrl.searchParams.get("year");
 var reports_to = '';
@@ -18,6 +18,21 @@ $('#mboCalcModal').on('hidden.bs.modal', function(){
   $('#runningAvgModalContent').modal('hide')
    getEmpDetails(getEmpEntries);
 });
+
+function getSups(){
+    $.ajax({
+        type: 'GET',
+        url: 'getSups.php',
+        dataType: 'json',
+        error: errorMessage()
+    }).done(function(response) {
+            var supArray = response;
+            for (let i=0; i<supArray.length; i++){
+                $('#supChoiceReassignButton').append('<option value="' + supArray[i].employee + '">' + supArray[i].employee + "</option>");
+            }
+        });
+    }
+
 
 function returnAfterDelete() {
   bootbox.confirm({
@@ -42,12 +57,12 @@ function returnAfterDelete() {
 }
 
 function errorMessage(jqXHR, textStatus, errorThrown) {
-console.log("jqXHR");
+/*console.log("jqXHR");
 console.log(jqXHR);
 console.log("textStatus");
 console.log(textStatus);
 console.log("errorThrown");
-console.log(errorThrown);
+console.log(errorThrown);*/
 }
 
 $('#writeupModalSave').click(function() {
@@ -96,33 +111,31 @@ var row_id = '';
 
 function getEmpDetails(callback) {
   $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: 'getEmpDetails.php',
         cache: false,
         data: {
-            urlGHR : urlGHR,
+            url_ghr : url_ghr,
             curQuarter : selQtr,
             curYear : selYear
         },
-        // The callback is sending the response from getEmpDetails, which is its JSON being echoed,
-        // along with reports_to and urlGHR, to getEmpEntries.
-
+        // The callback is sending the response from getEmpDetails, which is its JSON being echoed, to getEmpEntries
+        error: errorMessage(),
         success: function(reports_to) {
-            callback(reports_to, urlGHR);
+            callback(reports_to, url_ghr);
         }
       }).done(function(empDetails) {
             row_id = empDetails.row_id;
-            $('#empName').replaceWith('<div id="empName" name="empName">' + empDetails.full_name + '</div>');
-            $('#empGHR').replaceWith('<div id="empGHR" name="empGHR">' + empDetails.ghr_id + '</div>');
-            $('#empTitleDiv').replaceWith('<div id="empTitleDiv" name="empTitleDiv">' + empDetails.title + '</div>');
-            $('#supName').replaceWith('<div id="supName" name="supName">' + empDetails.reports_to_name + '</div>');
-            $('#quarter').replaceWith('<input id="quarter" name="quarter" type="text" value=' + selQtr + ' readonly class="form-control">');
-            $('#year').replaceWith('<div id="quarter" name="quarter"><input id="year" name="year" type="text" value=' + selYear +
-                ' readonly class="form-control"></div>');
-            $('#overall_ranking').replaceWith('<div id="overall_ranking" name="overall_ranking">\
-                <input id="quarter" name="quarter" type="text" value=' + empDetails.overall_ranking + ' readonly class="form-control"></div>');
-            $('#run_avg').replaceWith('<div id="run_avg" name="run_avg">\
-                <input id="running_avg" name="running_avg" type="text" value=' + empDetails.running_avg + ' readonly class="form-control"></div>');
+            $('#emp_name_val').val(empDetails.full_name);
+            $('#emp_name_holder_val').val(empDetails.full_name);
+            $('#emp_ghr_val').val(empDetails.ghr_id);
+            $('#emp_title_val').val(empDetails.title);
+            $('#sup_name_val').val(empDetails.reports_to_name);
+            $('#sup_name_holder_val').val(empDetails.reports_to_name);
+            $('#quarter_val').val(selQtr);
+            $('#year_val').val(selYear);
+            $('#overall_ranking_val').val(empDetails.overall_ranking);
+            $('#run_avg_val').val(empDetails.running_avg);
             $('#writeupFormBody').val(empDetails.writeup);
             $('#backBtn').replaceWith('<span id="backBtn"><a class="btn btn-warning" href="index.php">Back</a></span>');
             if (empDetails.overall_rating) { // If it's null, leave 'Overall Rating' in place, otherwise pull in current rating
@@ -135,10 +148,10 @@ function getEmpDetails(callback) {
         });
     }
 
-function getEmpEntries(reports_to, urlGHR) {
-    // This is assigning the value of a callback result JSON (reports_to) value (reports_to.reports_to) to var reports_to_ghr
+// This could all be cleaned up, probably does not need the convoluted callback
+function getEmpEntries(reports_to, url_ghr) {
     var reports_to_ghr = reports_to.reports_to;
-  $.ajax({
+    $.ajax({
         type: 'POST',
         url: 'getEmpEntries.php',
         cache: false,
@@ -150,7 +163,7 @@ function getEmpEntries(reports_to, urlGHR) {
       }).done(function(empEntries) {
         var allCheckBoxes = $(':checkbox');
         let checkMap = new Map();
-        empEntries = empEntries.filter(item => item.ghr_id == urlGHR)[0];
+        empEntries = empEntries.filter(item => item.ghr_id == url_ghr)[0];
         // Gets all the bools that became strings so they can check the right boxes
         Object.keys(empEntries).forEach(function(key) {
             // Older records may have nulls, don't pull those in.
@@ -188,7 +201,7 @@ function getEmpEntries(reports_to, urlGHR) {
 $('#submitPageSave').click(function() {
     // If you don't cast the bools to a string, false and null both show up as null in the JSON object
     let pageData = [];
-    let ghr_id = urlGHR;
+    let ghr_id = url_ghr;
     let pos_watch_check = pos_watch[1].checked.toString();
     let neg_watch_check = neg_watch[1].checked.toString();
     let ean_pa_check = ean_pa[1].checked.toString();
@@ -261,10 +274,10 @@ $('#deleteRecord').click(function() {
 });
 
 $('#mboCalcButton').click(function() {
-$('#runningAvgModalContent').modal({
-  'backdrop': 'static',
-  'show': true
-})
+    $('#runningAvgModalContent').modal({
+      'backdrop': 'static',
+      'show': true
+    })
 });
 
 $.ajax({
@@ -273,7 +286,7 @@ $.ajax({
     data: {
       qtr : selQtr,
       year : selYear,
-      ghr_id : urlGHR
+      ghr_id : url_ghr
     },
     datatype: 'json',
     error: errorMessage(),
@@ -281,6 +294,39 @@ $.ajax({
         checkIfExist(response);
     }
 });
+
+
+$('#bulk_reassign_check').click(function() {
+    if (!$('#bulk_reassign_check')[0].checked) {
+        $('#emp_name_holder_val').val($("#emp_name_val").val());
+    }
+    else {
+        $('#emp_name_holder_val').val("All");
+    }
+});
+
+$('#supChoiceReassignButton').click(function() {
+    var to_be_sup = $('#supChoiceReassignButton').val();
+    $('#new_sup_name_holder').val(to_be_sup);
+});
+
+$('#reassignSubmitButton').click(function(event) {
+    $.ajax({
+        type: 'POST',
+        url: 'sqlEditPush.php',
+        data: {
+            ghr_id: url_ghr,
+            new_sup_name: $('#new_sup_name_holder').val(),
+            cur_sup_name: $('#sup_name_val').val(),
+            year: selYear,
+            quarter: selQtr,
+            bulk_bool: $('#bulk_reassign_check')[0].checked
+        },
+        datatype: 'json',
+        success: bootbox.alert("Success!")
+    });
+});
+
 
 function checkIfExist(recordExist) {
 if (recordExist) {
@@ -313,7 +359,7 @@ else if (!(recordExist)) {
                     type: 'POST',
                     url: 'saveNewRecord.php',
                     data: {
-                        ghr_id: urlGHR,
+                        ghr_id: url_ghr,
                         qtr: sessionStorage.selQtr,
                         year: sessionStorage.selYear
                     },
@@ -340,96 +386,100 @@ function fixedRound(num) {
 }
 
 function returnMBO() {
-var mboData = $.ajax({
-  type: 'GET',
-  url: 'getMBO.php',
-  data: {
-      id: urlGHR,
-      quarter: sessionStorage.selQtr,
-      year: sessionStorage.selYear
-   },
-  datatype: 'html',
-  error: errorMessage()
-});
-
-return mboData;
+    var mboData = $.ajax({
+      type: 'GET',
+      url: 'getMBO.php',
+      data: {
+          id: url_ghr,
+          quarter: sessionStorage.selQtr,
+          year: sessionStorage.selYear
+       },
+      datatype: 'html',
+      error: errorMessage()
+    });
+    return mboData;
 }
 
-var runningAvg;
-var runningAvgRating;
-returnMBO().then(function(mbos) {
-    let mboTableResult = [];
-    let filteredMBO = mbos.filter(function(e) {
-      if (e.worker_title == $('#empTitle')[0].value) {
-          mboTableResult.push(e);
-          mboTableResult = mboTableResult.filter(e => e.weight > 0);
-          var mboCalcModal = new Tabulator("#mboCalcForm", {
-              layout:"fitColumns",
-              groupBy:"item",
-              groupStartOpen:false,
-              selectable:true,
-              data:mboTableResult,
-              columns:[
-                  {title:"Item", field:"item", formatter:"textarea", width:150},
-                  {title:"Rating", field:"rating", formatter:"textarea", width:150},
-                  {title:"Weight", field:"weight", formatter:"textarea", width:100},
-                  {title:"Metric", field:"metric", formatter:"textarea", width:750},
-              ],
-              initialSort:[
-                  {column:"rating", dir:"asc"},
-                  {column:"item", dir:"asc"}
-              ],
-              rowClick:function(e, row){
-                let selRows = mboCalcModal.getSelectedData();
-                runningAvg = 0.0;
-                runningAvgRating = '';
-                selRows.forEach(function(e) {
-                    // Fixes the bootbox modal deleting the scrollbar when other modal is open
-                    $('.bootbox.modal').on('hidden.bs.modal', function () {
-                      if($('.modal').hasClass('in')){
-                                 $('body').addClass('modal-open');
-                             }
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+    getSups();
+    var runningAvg;
+    var runningAvgRating;
+    returnMBO().then(function(mbos) {
+        let mboTableResult = [];
+        let filteredMBO = mbos.filter(function(e) {
+          if (e.worker_title == $('#emp_title_val')[0].value) {
+              mboTableResult.push(e);
+              console.log(mboTableResult);
+              mboTableResult = mboTableResult.filter(e => e.weight > 0);
+              var mboCalcModal = new Tabulator("#mboCalcForm", {
+                  layout:"fitColumns",
+                  groupBy:"item",
+                  groupStartOpen:false,
+                  selectable:true,
+                  data:mboTableResult,
+                  columns:[
+                      {title:"Item", field:"item", formatter:"textarea", width:150},
+                      {title:"Rating", field:"rating", formatter:"textarea", width:150},
+                      {title:"Weight", field:"weight", formatter:"textarea", width:100},
+                      {title:"Metric", field:"metric", formatter:"textarea", width:750},
+                  ],
+                  initialSort:[
+                      {column:"rating", dir:"asc"},
+                      {column:"item", dir:"asc"}
+                  ],
+                  rowClick:function(e, row){
+                    let selRows = mboCalcModal.getSelectedData();
+                    runningAvg = 0.0;
+                    runningAvgRating = '';
+                    selRows.forEach(function(e) {
+                        // Fixes the bootbox modal deleting the scrollbar when other modal is open
+                        $('.bootbox.modal').on('hidden.bs.modal', function () {
+                          if($('.modal').hasClass('in')){
+                                     $('body').addClass('modal-open');
+                                 }
+                        });
+                        var valueToAdd = e.weight/100 * e.num_rating;
+                        runningAvg += valueToAdd;
+                        let checkGroup = row.getGroup().getRows();
+                        let countGroup = 0;
+                        for (let i=0; i<checkGroup.length; i++) {
+                            if (checkGroup[i]._row.modules.select.selected == true) {
+                                countGroup++;
+                            }
+                            while (countGroup > 1) {
+                                row.deselect();
+                                countGroup = 0;
+                                runningAvg -= valueToAdd; // Added so that the displayed value doesn't temporarily show an erroneous value
+                                bootbox.alert({
+                                    message: "You may only select one rating per MBO. Select an item again to deselect it.",
+                                    className: 'animated jello',
+                                    backdrop: true
+                                });
+                            }
+                        }
+                        if (Math.round(runningAvg) > 3) {
+                            runningAvgRating = "Unsuccessful";
+                        }
+                        else if (Math.round(runningAvg) > 2) {
+                            runningAvgRating = "Successful";
+                        }
+                        else if (Math.round(runningAvg) > 1) {
+                            runningAvgRating = "Exceeds Some";
+                        }
+                        else if (Math.round(runningAvg) <= 1) {
+                            runningAvgRating = "Exceeds Most";
+                        }
                     });
-                    var valueToAdd = e.weight/100 * e.num_rating;
-                    runningAvg += valueToAdd;
-                    let checkGroup = row.getGroup().getRows();
-                    let countGroup = 0;
-                    for (let i=0; i<checkGroup.length; i++) {
-                        if (checkGroup[i]._row.modules.select.selected == true) {
-                            countGroup++;
-                        }
-                        while (countGroup > 1) {
-                            row.deselect();
-                            countGroup = 0;
-                            runningAvg -= valueToAdd; // Added so that the displayed value doesn't temporarily show an erroneous value
-                            bootbox.alert({
-                                message: "You may only select one rating per MBO. Select an item again to deselect it.",
-                                className: 'animated jello',
-                                backdrop: true
-                            });
-                        }
-                    }
-                    if (Math.round(runningAvg) > 3) {
-                        runningAvgRating = "Unsuccessful";
-                    }
-                    else if (Math.round(runningAvg) > 2) {
-                        runningAvgRating = "Successful";
-                    }
-                    else if (Math.round(runningAvg) > 1) {
-                        runningAvgRating = "Exceeds Some";
-                    }
-                    else if (Math.round(runningAvg) <= 1) {
-                        runningAvgRating = "Exceeds Most";
-                    }
-                });
-                $('#runningAvg').replaceWith('<h4 align="right" id="runningAvg">Numeric: </h4>');
-                $('#runningAvg').append(fixedRound(runningAvg));
-                $('#runningAvgRating').replaceWith('<h4 align="right" id="runningAvgRating">Alpha: </h4>');
-                $('#runningAvgRating').append(runningAvgRating);
-            },
-          });
-        }
-        // Table wasn't loading until sorted, this forces it.
-        mboCalcModal.redraw();
-    })
+                    $('#runningAvg').replaceWith('<h4 align="right" id="runningAvg">Numeric: </h4>');
+                    $('#runningAvg').append(fixedRound(runningAvg));
+                    $('#runningAvgRating').replaceWith('<h4 align="right" id="runningAvgRating">Alpha: </h4>');
+                    $('#runningAvgRating').append(runningAvgRating);
+                },
+              });
+            }
+            // Table wasn't loading until sorted, this forces it.
+            mboCalcModal.redraw();
+        })
+    });
 });

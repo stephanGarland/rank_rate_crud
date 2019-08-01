@@ -1,8 +1,8 @@
 <?php
     header("Content-Type: application/json");
-    require 'db.php';
+    require '../rank_rate_inc/db.php';
 
-    $insertWriteupSql = "INSERT into public.review_ratings(ghr_id, full_name, quarter, year, writeup)
+    $insertWriteupSql = "INSERT into public.review_ratings_test(ghr_id, full_name, quarter, year, writeup)
                     VALUES($1, $2, $3, $4, $5)
                     ON conflict (ghr_id, quarter, year)
                     DO

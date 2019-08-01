@@ -1,11 +1,11 @@
 <?php
     error_reporting(E_ALL);
     ini_set('display_errors', '1');
-    require 'db.php';
+    require '../rank_rate_inc/db.php';
     $empGHR = $_GET['id'];
 
     $getRatingSql = "SELECT title, subgroup
-                    FROM public.review_ratings
+                    FROM public.review_ratings_test
                     WHERE
                     ghr_id = $1
                     ORDER BY
@@ -26,7 +26,7 @@
                 rating_group_1_mbo_3,
                 rating_group_1_mbo_4,
                 rating_group_1_mbo_5
-                FROM public.review_ratings
+                FROM public.review_ratings_test
                 WHERE
                     ghr_id = $1
                 AND
@@ -43,7 +43,7 @@
     $title = $resultTitleArr[0]['title'];
 
     $getTemplateMBOSql = "SELECT
-                    * FROM public.review_mbo_new
+                    * FROM public.review_mbo_test
                     WHERE
                     worker_title = $1
                         AND

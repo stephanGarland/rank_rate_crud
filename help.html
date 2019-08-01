@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap">
+        <title>CLNS Rank/Rate Help</title>
+        <style type="text/css">
+            @media screen and (min-width: 1400px) {
+                html {
+                    max-width: 1200px;
+                    font-family: 'Open Sans', sans-serif;
+                    margin: auto;
+                    scroll-behavior: smooth;
+                }
+
+                img {
+                    max-width: 100%;
+                    height: auto;
+                    border:1px solid #021a40;
+                    padding: 5px;
+                    border-radius: 5px;
+                }
+
+                #navbar {
+                  position: fixed;
+                  left: 0;
+                  margin: 5px;
+                  z-index: 9999;
+                  background-color: #337ab7;
+                  border-radius: 5px;
+                }
+
+                #navbar a {
+                    float: left;
+                    display: block;
+                    color: white;
+                    text-align: center;
+                    padding: 14px;
+                    text-decoration: none;
+                }
+
+                h3 {
+                    margin-left: 10px;
+                }
+
+                p {
+                    margin-left: 10px;
+                }
+
+            }
+        </style>
+    </head>
+    <body>
+
+    <div id="navbar">
+        <a href="#top">Top of Page</a><br>
+        <a href="#selectSup">Selecting Sup/Qtr/Year</a><br>
+        <a href="#shiftRank">Shift Ranking</a></br>
+        <a href="#bulkAdd">Bulk Add</a><br>
+        <a href="#readUpdate">Read/Update</a><br>
+        <a href="#blueBook">Blue Book</a><br>
+        <a href="#mboCalc">MBO Calculator</a><br>
+        <a href="#reassign">Reassign</a><br>
+        <a href="#shiftSummary">Summarize</a><br>
+        <a href="#shiftChart">Summary Chart</a><br>
+        <a href="#contact">Contact Me</a><br>
+        <a href="index.php">Back to App</a>
+    </div>
+
+    <h1 id="top">Rank/Rate Help</h1>
+
+    <h2>Main Page</h2>
+
+    <p>Once you login, you'll have a mostly empty screen, with drop-downs to Select Supervisor, Year, and Quarter.</p>
+    <img src="/cc/rank_rate_inc/images/rr_index.png" alt="Index">
+
+    <h3 id="selectSup">Selecting Supervisor, Quarter, and Year</h3>
+    <p>To begin, select your desired supervisor, year, and quarter. Legacy users will note that there is no longer a submit button -
+        the app is constantly checking for inputs, and updates the displayed employees based on the inputs given.</p>
+    <img src="/cc/rank_rate_inc/images/rr_employees.png" alt="Employee Listing">
+
+    <h3 id="shiftRank">Shift Ranking</h3>
+    <p>Shift Ranking adjustment is accomplished by a modal that allows you to drag people. Drag your employees to their desired
+        relative position, and the numbering will auto-adjust. Note that if you have both EQP and PRC, it's preferred to separately rank them.
+    </p>
+    <img src="/cc/rank_rate_inc/images/rr_shift_rank.png" alt="Shift Ranking">
+
+    <h3 id="bulkAdd">Bulk Add</h3>
+    <p>Bulk Add allows you to add a blank template for your entire shift. You'll need to use this to create a new Quarter to edit.
+        Note that it simply copies the last quarter's employees, so if you had a transfer, manual edits will need to take place.
+        To use this, select the desired Quarter and Year, and click 'Submit Changes.'
+    </p>
+    <img src="/cc/rank_rate_inc/images/rr_bulk_add.png" alt="Bulk Add">
+
+    <h2>Individual Records</h2>
+
+    <h3 id="readUpdate">Read/Update</h3>
+    <ul>
+        <li>Read/Update allows you to edit an individual's quarterly entry.</li>
+        <ul>
+            <li>The grayed-out boxes show you information about the employee; some of it as a verification that you're editing the right person,
+                and others that are useful to know such as their running average for the year.
+            </li>
+            <li>There are nine checkboxes to the right, which you can choose from. There are no limits to what you can select,
+                so be reasonable - if the employee has an EAN entry, they may not necessarily be on a negative
+                watch, but they probably aren't on a positive watch.
+            </li>
+            <li>The Overall Rating drop-down can be used to manually override a rating, but it should be populated via the MBO Calc modal.
+            </li>
+            <li>Submit/Back/Delete are self-explanatory. Note that Submit is only needed for manually selecting a rating, or checkboxes. All
+                modals have their own submittals. Delete will give you one warning allowing you to cancel, but once done, the rating is lost.
+            </li>
+        </ul>
+    </ul>
+    <img src="/cc/rank_rate_inc/images/rr_read_update.png" alt="Read/Update">
+
+    <h3 id="blueBook">Blue Book</h3>
+    <p>Blue Book opens a modal with a predefined template based on current MBOs for the group. You are free to write whatever
+    supporting information you would like in here, but you're encouraged to keep the template format, and add free-form at the bottom. Note
+    that spell check is provided free of charge. You are encouraged to take its suggestions.</p>
+    <img src="/cc/rank_rate_inc/images/rr_bluebook.png" alt="Blue Book">
+
+    <h3 id="mboCalc">MBO Calculator</h3>
+    <p>MBO Calc opens a double modal that calculates an employee's numeric and alphabetic rating, based on MBOs. Each category can have
+        one item selected - to deselect an item, click it again, and notice that the highlighting disappears. As you move through the
+        categories, the score to the right will change to reflect your inputs. When submitted, the entry for this specific Quarter/Year
+        becomes part of the Running Average seen on the main Read/Update page. Note that the Current Quarter Rating modal is attached to the
+        MBO Calculator modal; by closing the main modal, the secondary modal will close.
+    </p>
+    <img src="/cc/rank_rate_inc/images/rr_mbo_calc.png" alt="MBO Calculator">
+
+    <h3 id="reassign">Reassign</h3>
+    <p>Reassign opens a modal that allows you to reassign an individual to another supervisor, or the entire shift. This is useful for intra-team
+        transfers (for the former) or if a supervisor leaves (for the latter). Note that only the currently selected quarter/year will be transferred,
+        thus allowing you to accurately view historical information as it was for the time.
+    </p>
+    <img src="/cc/rank_rate_inc/images/rr_reassign.png" alt="Reassign">
+
+    <h3 id="shiftSummary">Summarize</h3>
+    <p>You can summarize either your shift, or all shifts. This will open up an interactive grid, much like an Excel Pivot Table, which allows
+        you to view all data for your shift. You can filter items by any column you'd like by entering some or all of the desired filter at the top, e.g.
+        '2' in 'Quarter' will display all 2nd Quarter entries, 'Eng' in 'Title' will display all levels of Engineer (since 'Eng' is not a substring of
+        any level of Technician). Note that for the boolean values, i.e. checkboxes, you'll need to use 'T' and 'F' to filter them.
+    </p>
+    <p>Double-clicking on any item other than an employee's name will allow you to edit it, but note that this does not change the stored data. It's
+        useful for performing what-if scenarios for the chart (next section), however. Double-clicking on an employee's name brings up the specific writeup
+        for that quarter/year.
+    </p>
+    <p>Right-clicking anywhere on the table allows you export the table to convenient formats such as CSV and XLSX, for sharing with others.
+    </p>
+    <img src="/cc/rank_rate_inc/images/rr_summarize_table.png" alt="Summarize Shift">
+
+    <h3 id="shiftChart">Chart</h3>
+    <p>If you scroll to the bottom of the table, you'll see the chart of Expected vs. Actual for the four Ratings. Hovering over the Unsuccessful
+    and Exceeds Most categories gives you a pop-up tag of names with those ratings, to aid in quick identification of those that may need a second look.</p>
+    <img src="/cc/rank_rate_inc/images/rr_summarize_chart.png" alt="Graph">
+
+    <br>
+    <br>
+    <br>
+    <h3 style="margin-left: 0px !important" id="contact">Contact Me</h3>
+    <a href="mailto:s.garland@samsung.com">s.garland@samsung.com</a>
+</body>
+</html>

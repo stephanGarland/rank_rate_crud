@@ -4,13 +4,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta charset="utf-8">
-    <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.min.js"></script>
-    <script src="https://unpkg.com/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
-    <script src="https://unpkg.com/tabulator-tables@4.0.5/dist/js/tabulator.min.js"></script>
-    <link href="https://unpkg.com/tabulator-tables@4.0.5/dist/css/bootstrap/tabulator_bootstrap.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css" rel="stylesheet">
+    <script src="/library/jquery/jquery-3.3.1.min.js"></script>
+    <script src="/library/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script src="/library/bootbox-5.0-min.js"></script>
+    <script src="/library/tabulator-4.0.4/dist/js/tabulator.min.js"></script>
+    <link href="/library/tabulator-4.0.4/dist/css/bootstrap/tabulator_bootstrap.min.css" rel="stylesheet">
+    <link href="/library/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/library/animate.min.css" rel="stylesheet">
     <style type="text/css">
 
     /* Tweaking default modals a bit for content, as long as screen size supports */
@@ -36,6 +36,10 @@
             left: 82%;
             bottom: 25%;
         }
+
+        .checkbox-container {
+            padding-top: 75px;
+        }
     }
 </style>
     <title>CLNS Rank/Rate</title>
@@ -50,32 +54,44 @@
           <div class="row">
             <div class="col-md-3">
               <label class="control-label">Name</label>
-                <div id="empName" name="empName"></div>
+              <div id="emp_name">
+                  <input id="emp_name_val" type="text" value="" readonly class="form-control">
+              </div>
             </div>
 
               <div class="col-md-2">
               <label class="control-label">GHR</label>
-                <div id="empGHR" name="empGHR"></div>
+                <div id="emp_ghr" name="empGHR">
+                    <input id="emp_ghr_val" type="text" value="" readonly class="form-control">
+                </div>
               </div>
 
               <div class="col-md-3">
                 <label class="control-label">Supervisor</label>
-                  <div id="supName" name="supName"></div>
+                  <div id="sup_name" name="supName">
+                      <input id="sup_name_val" type="text" value="" readonly class="form-control">
+                  </div>
               </div>
 
               <div class="col-md-2">
               <label class="control-label">Title</label>
-                <div id="empTitleDiv" name="empTitleDiv"></div>
+                <div id="emp_title" name="empTitle">
+                    <input id="emp_title_val" type="text" value="" readonly class="form-control">
+                </div>
               </div>
 
             <div class="col-md-1">
               <label class="control-label">Quarter</label>
-                <div id="quarter" name="quarter"></div>
+                <div id="quarter" name="quarter">
+                    <input id="quarter_val" type="text" value="" readonly class="form-control">
+                </div>
             </div>
 
             <div class="col-md-1">
               <label class="control-label">Year</label>
-                <div id="year" name="year"></div>
+                <div id="year" name="year">
+                    <input id="year_val" type="text" value="" readonly class="form-control">
+                </div>
             </div>
           </div>
 
@@ -102,87 +118,135 @@
           <div id="writeup">
               <form id="writeupForm">
                 <button class="btn btn-primary" type="button" data-toggle="modal" data-target=".writeup-modal">Blue Book</button>
-                <div class="modal writeup-modal animated bounceInDown" tabindex="-1" role="dialog" aria-labelledby="Writeup" aria-hidden="true">
-                  <div class="modal-dialog modal-md" role="document">
-                    <div class="modal-content">
-                          <h3 class="modal-title">Blue Book</h3>
-                        <br>
-                      <div class="modal-body" id="writeupBody">
-                        <div class="container-fluid">
-                          <div class="row">
-                            <ul class="list-group">
+                    <div class="modal writeup-modal animated bounceInDown" tabindex="-1" role="dialog" aria-labelledby="Writeup" aria-hidden="true">
+                      <div class="modal-dialog modal-md" role="document">
+                        <div class="modal-content">
+                              <h3 class="modal-title">Blue Book</h3>
+                            <br>
+                          <div class="modal-body" id="writeupBody">
+                            <div class="container-fluid">
+                              <div class="row">
+                                <ul class="list-group">
                                   <div id="writeupForm"><textarea class="form-control" rows="15" id="writeupFormBody"></textarea></div>
                             </ul>
                           </div>
-                    </div>
+                        </div>
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                       <button type="button" class="btn btn-primary" id="writeupModalSave">Save changes</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-        </form>
+            </form>
         </div>
         </div>
         <div class="col-md-2">
         <label class="control-label">MBO Calc</label>
-          <div id="writeup">
-              <form id="writeupForm">
-                <button class="btn btn-primary" id="mboCalcButton" type="button" data-toggle="modal" data-target=".mbo-calc-modal">MBO Calc</button>
-                <div class="modal mbo-calc-modal animated bounceInLeft" id="mboCalcModal" tabindex="-1" role="dialog" aria-labelledby="MBO Calculator" aria-hidden="true">
-                  <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
-                          <h3 class="modal-title">MBO Calculator</h3>
-                        <br>
+          <div id="mboCalc">
+            <button class="btn btn-primary" id="mboCalcButton" type="button" data-toggle="modal" data-target=".mbo-calc-modal">MBO Calc</button>
+            <div class="modal mbo-calc-modal animated bounceInLeft" id="mboCalcModal" tabindex="-1" role="dialog" aria-labelledby="MBO Calculator" aria-hidden="true">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <h3 class="modal-title">MBO Calculator</h3>
+                    <br>
                       <div class="modal-body" id="mboCalcBody">
                         <div class="container-fluid">
                           <div class="row">
-                                  <div id="mboCalcForm"></div>
+                          <div id="mboCalcForm"></div>
                           </div>
-                    </div>
+                        </div>
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                       <button type="button" class="btn btn-primary" id="mboCalcModalSave">Save changes</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
             </div>
-        </form>
         </div>
-        </div>
-          <div id="runningAvgModal">
-              <form id="runningAvgModalForm">
-                <div class="modal mbo-running-avg-modal animated bounceInRight" id="runningAvgModalContent" tabindex="-1" role="dialog" aria-labelledby="Running Average" aria-hidden="true">
-                  <div class="modal-dialog modal-sm" role="document">
-                    <div class="modal-content">
-                          <h3 class="modal-title">Current Quarter Rating</h3>
-                        <br>
-                      <div class="modal-body" id="runningAvgModalBody">
-                        <div class="container-fluid">
-                          <div class="row">
-                                  <div id="runningAvgModalForm"></div>
+      <div id="runningAvgModal">
+        <div class="modal mbo-running-avg-modal animated bounceInRight" id="runningAvgModalContent" tabindex="-1" role="dialog" aria-labelledby="Running Average" aria-hidden="true">
+          <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+              <h3 class="modal-title">Current Quarter Rating</h3>
+                <br>
+                  <div class="modal-body" id="runningAvgModalBody">
+                    <div class="container-fluid">
+                      <div class="row">
+                          <div id="runningAvgModalForm"></div>
                           </div>
                           <div class="row"><h4 align="right" id="runningAvg">Numeric: </h4></div>
                           <div class="row"><h4 align="right" id="runningAvgRating">Alpha: </h4></div>
                     </div>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <label class="control-label">Reassign</label>
+        <br>
+        <button class="btn btn-danger" id="reassignButton" type="button" data-toggle="modal" data-target=".reassign-modal">Reassign</button>
+        <div class="modal fade reassign-modal" id="reassignModal" tabindex="-1" role="dialog" aria-labelledby="Reassign" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <b>Reassign employee to new supervisor</b>
+                  <br>
+              </div>
+              <div class="modal-body" id="reassignBody">
+                <div class="container-fluid">
+                    <div class="row">
+                        <select name="supChoiceReassign" id="supChoiceReassignButton" value="" \
+                            class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                          <option>Select Supervisor</option>
+                        </select>
+                        <span id="blankSpace" style="display:inline-block; width: 10px;"></span>
+                        <a class="btn btn-danger" id="reassignSubmitButton">Reassign</a>
+                        <span id="blankSpace" style="display:inline-block; width: 10px;"></span>
+                        <input id="bulk_reassign_check" href="#" data-toggle="tooltip" type="checkbox" \
+                            title="This will reassign all currently assigned employees to the new supervisor.">
+                        <label class="control-label">Bulk Reassign</label>
+                    </div>
+                    <hr>
+                    <label class="control-label">Employee</label>
+                    <div id="emp_name_holder">
+                        <input id="emp_name_holder_val" type="text" value="" readonly class="form-control">
+                    </div>
+                    <br>
+                    <label class="control-label">Supervisor (As-is)</label>
+                    <div id="sup_name_holder">
+                        <input id="sup_name_holder_val" type="text" value="" readonly class="form-control">
+                    </div>
+                    <br>
+                    <label class="control-label">Supervisor (To-be)</label>
+                    <input id="new_sup_name_holder" type="text" value="" readonly class="form-control">
+                    <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  </div>
+                    </div>
                 </div>
               </div>
             </div>
-        </form>
+          </div>
         </div>
-        <div class="col-md-2"></div>
+    </div>
+
+
         <div class="col-md-2">
           <label class="control-label">Overall Ranking</label>
-            <div id="overall_ranking" name="overall_ranking"></div>
+            <div id="overall_ranking" name="overall_ranking">
+                <input id="overall_ranking_val" type="text" value="" readonly class="form-control">
+            </div>
         </div>
 
         <div class="col-md-2">
           <label class="control-label">Running Average</label>
-            <div id="run_avg" name="run_avg"></div>
+            <div id="run_avg" name="run_avg">
+                <input id="run_avg_val" type="text" value="" readonly class="form-control">
+            </div>
         </div>
 
-        <div class="container">
+        <div class="checkbox-container container">
             <div class="pull-right">
                 <div class="text-right">
                     <div class="row">
@@ -227,7 +291,7 @@
                             <div id="ean_final"><input id="ean_final" name="checkbox[]" type="checkbox"></div>
                         </div>
                     </div>
-                    </div>
+                </div>
                 </div>
             </div>
         </div>

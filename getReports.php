@@ -1,5 +1,5 @@
 <?php
-  require 'db.php';
+  require '../rank_rate_inc/db.php';
   if (isset($_POST['supChoice'])) {
       $selectedSup = $_POST['supChoice'];
       $qtr = $_POST['qtr'];
@@ -12,24 +12,30 @@
                     title,
                     term_date,
                     reports_to_name
-                    FROM public.review_ratings
-                    WHERE (
-                        (dept_name LIKE $1)
+                    FROM public.review_ratings_test
+                    WHERE
+                    (
+                        (reports_to_name LIKE $1)
                     AND
-                        (reports_to_name LIKE $2)
+                        (title NOT LIKE $2)
                     AND
-                        (title NOT LIKE $3)
+                        (quarter = $3)
                     AND
-                        (quarter LIKE $4)
-                    AND
-                        (year LIKE $5)
+                        (year = $4)
                     )
                     ORDER BY subgroup, full_name;
                     ";
 
           $resultEmps = pg_prepare($db, "get_reports", $getReportsSql)
             or die (pg_last_error($db));
-          $resultEmps = pg_execute($db, "get_reports", array('Clean%', $selectedSup, '%Associate%', $qtr, $year))
+          $resultEmps = pg_execute($db, "get_reports", array
+          (
+              //'%Clean',
+              $selectedSup,
+              '%Associate%',
+              $qtr,
+              $year)
+              )
             or die (pg_last_error($db));
           $resultEmpsArr = pg_fetch_all($resultEmps);
       }

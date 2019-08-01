@@ -1,8 +1,8 @@
 <?php
     header("Content-Type: application/json");
-    require 'db.php';
+    require '../rank_rate_inc/db.php';
 
-    $insertShiftRankSql = "INSERT into public.review_ratings(full_name, quarter, year, shift_ranking)
+    $insertShiftRankSql = "INSERT into public.review_ratings_test(full_name, quarter, year, shift_ranking)
                         VALUES($1, $2, $3, $4)
                         ON conflict (full_name, quarter, year)
                         DO

@@ -1,10 +1,18 @@
+<?php
+session_start();
+if (!isset($_COOKIE['rank_rate'])) {
+    header("Location: http://ccdev/cc/rank_rate/rankRateLogin.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta charset="utf-8">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.1.0/mermaid.min.js"></script>
+        <script src="/library/mermaid-8.1.0.min.js"></script>
         <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
         <title>About CLNS Rank/Rate</title>
         <style type="text/css">
@@ -13,21 +21,63 @@
                     font-family: 'Open Sans', sans-serif;
                     max-width: 1200px;
                     margin: auto;
+                    scroll-behavior: smooth;
+                }
+
+                #navbar {
+                  position: fixed;
+                  left: 0;
+                  margin: 5px;
+                  z-index: 9999;
+                  background-color: #337ab7;
+                  border-radius: 5px;
+                }
+
+                #navbar a {
+                    float: left;
+                    display: block;
+                    color: white;
+                    text-align: center;
+                    padding: 14px;
+                    text-decoration: none;
+                }
+
+                h3 {
+                    margin-left: 10px;
+                }
+
+                p {
+                    margin-left: 10px;
                 }
             }
         </style>
     </head>
     <body>
-        <h1>Rank/Rate Documentation</h1>
+    <div id="navbar">
+        <a href="#top">Top of Page</a><br>
+        <a href="#loginFlow">Login Flow</a><br>
+        <a href="#viewFlow">View Flow</a></br>
+        <a href="#editFlow">Edit Flow</a><br>
+        <a href="#summaryFlow">Summary Flow</a><br>
+        <a href="#about">About/HOWTO</a><br>
+        <a href="#addSups">Add Supervisors</a><br>
+        <a href="#changeMBO">Change MBOs</a><br>
+        <a href="#bugs">Known Bugs/TODO</a><br>
+        <a href="#sundry">Technical Sundries</a><br>
+        <a href="#contact">Contact Me</a><br>
+        <a href="index.php">Back to App</a>
+    </div>
+
+        <h1 id="top">Rank/Rate Documentation</h1>
 
         <h2>Overview</h2>
 
-        <p>Built using Bootstrap3, Bootbox, JQuery, JQuery UI, Mermaid (this page only), Plotly, Tabulator, and ag-Grid, along with some CSS niceties.
+        <p>Built using Bootstrap3, Bootbox, jQuery, jQuery UI, Mermaid (this page only), Plotly, Tabulator, and ag-Grid, along with some CSS niceties.
             Not IE compatible. Use Chrome.</p>
 
         <p>PostgreSQL backend, PHP/JS frontend with the above libraries/frameworks.</p>
 
-        <h2>Login flow</h2>
+        <h2 id="loginFlow">Login flow</h2>
         <div class="mermaid">
             sequenceDiagram
                 participant db as db.php
@@ -57,7 +107,7 @@
             end
         </div>
 
-        <h2>View flow</h2>
+        <h2 id="viewFlow">View flow</h2>
         <div class="mermaid">
             sequenceDiagram
                 participant index as main.js
@@ -85,8 +135,7 @@
             get_mbo->>create: GET MBO template for specific employee title for use in modal
         </div>
 
-        <h2>Edit flow</h2>
-
+        <h2 id="editFlow">Edit flow</h2>
         <div class="mermaid">
             sequenceDiagram
                 participant index as main.js
@@ -104,7 +153,7 @@
             create->>save_mbo: POST from modal utilizing tabulator to calculate MBO score
         </div>
 
-        <h2>Summary flow</h2>
+        <h2 id="summaryFlow">Summary flow</h2>
         <div class="mermaid">
             sequenceDiagram
                 participant index as main.js
@@ -123,9 +172,9 @@
         </div>
 
         <p>
-        <h2>About/HOWTO</h2>
+        <h2 id="about">About/HOWTO</h2>
 
-        <h3>Add new supervisors</h3>
+        <h3 id="addSups">Add new supervisors</h3>
 
         <p>To add new supervisors, they first must exist in the SQL table as either a Supervisor or TR. In the future,
             this should pull from a central table, but for now, you have to update review_employees manually.
@@ -135,16 +184,30 @@
             so ensure the two match.
         </p>
 
-        <p>Next, you'll need to add them as an authorized user in fit_login.php. Currently the block starts on line 69,
-            and is obfuscated in Base64. Decode it, add their name and GHR in the style of the rest, re-encode it, and
-            replace the block. If you don't find this necessary, remove the eval statement and just have the array.
-            It is server-side, after all, so there's little reason to suspect anyone would gain unauthorized access to it.
+        <p>Next, you'll need to add them as an authorized user in fit_login.php. Find the array, add the desired person.
             As an aside, index.php is just checking that a session cookie exists with title 'rank_rate.'
             That should probably look for the FIT token or something similarly robust. The cookie clears when the browser closes,
             not the tab.
         </p>
 
-        <h3>Known bugs/TODO</h3>
+        <h3 id="changeMBO">Change MBOs</h3>
+
+        <p>The easiest way is via "PostgreSQL table update.xlsm"</p>
+        <ol>
+            <li>On the Parameters sheet, insert the DB name and login information, and select REPLACE or ADD for Type.
+                <strong>NOTE: REPLACE IMMEDIATELY AND WITHOUT FURTHER WARNING OVERWRITES THE SELECTED DATABASE,
+                    SO ENSURE YOU HAVE A BACKUP FIRST.
+                </strong>
+            </li>
+            <li>On the Data sheet, insert your desired columns as headers in Row 1, then records below.</li>
+            <li>Run the macro.</li>
+            <li>Check the result, both in the DB and in the app, specifically in the MBO Calc modal to ensure it comes across correctly.
+                I think I've gotten all special characters to parse correctly, but also maybe you don't need emojis and
+                Zalgo text in your MBOs or writeups, mkay?
+            </li>
+        </ol>
+
+        <h3 id="bugs">Known bugs/TODO</h3>
 
         <ol>
             <li>In ag-Grid filtering, you must use 't' and 'f' to filter booleans; nothing else works.</li>
@@ -155,27 +218,32 @@
             </li>
             <li>An annual roll-up that somehow more neatly displays everyone's employees.</li>
             <li>Along the same lines, storing and displaying individual MBO scores rather than a total would be nice.</li>
-            <li>Debating whether or not to allow direct edits from within ag-Grid; currently it is read-only.</li>
+            <strike><li>Debating whether or not to allow direct edits from within ag-Grid; currently it is read-only.</li></strike><strong>EPHEMERAL EDITS ALLOWED</strong></li>
             <li>I've done some refactoring to clean up code, use more const/let and less var, etc. It could use more work.</li>
             <strike><li>JS should be pulled out of the HTML and added as an include. Eventually. </strike><strong>DONE</strong></li>
             <li>Rebuild the entire project using React or Angular. Yeah.</li>
-            <li>Change the eval() for password obfuscation to use a hash function checking against a DB entry or something.</li>
         </ol>
 
-        <h3>Technical sundries</h3>
+        <h3 id="sundry">Technical sundries</h3>
 
         <ul>
-        <li>The app does its best to assume the user is incompetent or malicious,
-            and warns them if something is destructive or potentially problematic.
-        </li>
-        <li>All SQL queries are prepared.</li>
-        <li>I'm pretty sure there are some vulnerabilities (see eval() above), but I didn't spend a
-            lot of time fuzzing it given the limited and internal userbase.
-        </li>
+            <li>The app does its best to assume the user is incompetent or malicious,
+                and warns them if something is destructive or potentially problematic.
+            </li>
+            <li>All SQL queries are prepared.
+            </li>
+            <li>I'm pretty sure there are some vulnerabilities, but I didn't spend a
+                lot of time fuzzing it given the limited and internal userbase.
+            </li>
+            <li>Build dev DBs if you're going to try to break it. db_create.sql can do this for you.
+            </li>
+        </ul>
 
-        <h3>Contact Me</h3>
-
-        <p><a href="mailto:stephan.marc.garland@gmail.com">stephan.marc.garland@gmail.com</a></p>
+        <br>
+        <br>
+        <br>
+        <h3 style="margin-left: 0px !important" id="contact">Contact Me</h3>
+        <a href="mailto:s.garland@samsung.com">s.garland@samsung.com</a>
         <script>mermaid.initialize({startOnLoad:true});</script>
     </body>
 </html>

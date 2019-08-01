@@ -70,7 +70,7 @@ function getReports(sup){
     });
 }
 
-function updateReadIcon(input){
+function updateReadIcon(){
         let readUpdateIcon = function(cell, formatterParams){
             return "<a class='btn btn-success read_update_btn' href=create.html?id="
                     + cell.getRow().getData().ghr_id + "&year=" + getSelYear() + "&qtr=" + getSelQtr()
@@ -187,11 +187,11 @@ $(document).ready(function() {
 
 
 function getShiftSummary(){
-    window.open("getSummary.php?selectedSup=" + JSON.stringify(getSelSup()));
+    window.open("getSummary.html?selectedSup=" + JSON.stringify(getSelSup()));
 }
 
 function getAllSummary(){
-    window.open("getSummary.php?selectedSup=" + JSON.stringify("%"));
+    window.open("getSummary.html?selectedSup=" + JSON.stringify("%"));
 }
 
 function success() {

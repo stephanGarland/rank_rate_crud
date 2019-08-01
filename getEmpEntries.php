@@ -1,6 +1,6 @@
 <?php
 
-    require 'db.php';
+    require '../rank_rate_inc/db.php';
     $supGHR = $_POST['reports_to'];
     $curQuarter = $_POST['curQuarter'];
     $curYear = $_POST['curYear'];
@@ -24,7 +24,7 @@
                     neg_watch,
                     succession,
                     promo
-                    FROM public.review_ratings
+                    FROM public.review_ratings_test
                     WHERE
                         (reports_to_name = $1
                     OR
@@ -37,6 +37,7 @@
                         subgroup LIKE $4
                     ORDER by subgroup desc, full_name;
                     ";
+
     $result = pg_prepare($db, "get_review", $getDetailsSql)
         or die (pg_last_error($db));
     $result = pg_execute($db, "get_review", array($supGHR, $curQuarter, $curYear, $subSel))
