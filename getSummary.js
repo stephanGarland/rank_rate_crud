@@ -3,7 +3,6 @@
     Community version is MIT-licensed, so it's fine for use anywhere
 
     *Fine, you can't Pivot, and you can't Export to Excel, so maybe it's kinda necessary
-    If you're interested, make friends with Jesse Ortega and he'll share the key - you just can't develop with it.
 */
 const parsedUrl = new URL(window.location.href);
 const urlSup = parsedUrl.searchParams.get("selectedSup");
