@@ -1,6 +1,8 @@
 ﻿
 # Rank Rate
 
+## WARNING - THIS WAS CREATED AS A LEARNING PROJECT FOR JS/PHP/SQL. IT ALMOST CERTAINLY DOES NOT IMPLEMENT BEST OR EVEN MODERATELY ACCPETABLE PRACTICES. I HIGHLY RECOMMEND NOT USING IT.
+
 * Description: CRUD framework for entering, storing, and visualizing rankings and ratings for employees.
 
 * Usage:
